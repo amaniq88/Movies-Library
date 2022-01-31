@@ -1,12 +1,12 @@
 # Movies-Library
 # Project Name - Project Version
-Movies-Library-V1
+Movies-Library-V2
 
 **Author Name**: Amani Musallam
 
 ## WRRC
 Add an image of your WRRC here
-![image](./img/wrrc.jpg)
+![image](./img/wrrc.jpeg)
 
 ## Overview
 movie server just adding the main structure 
@@ -16,3 +16,4 @@ windows 10 + , cpu , RAM
 
 ## Project Features
 this Appliaction will show the user the uptodate movie with sumary information along with the location of live events 
+five more pages added Trending search , TV shows and season 
