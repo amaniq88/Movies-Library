@@ -1,6 +1,6 @@
 # Movies-Library
 # Project Name - Project Version
-Movies-Library-V2
+Movies-Library-V3
 
 **Author Name**: Amani Musallam
 
@@ -17,3 +17,4 @@ windows 10 + , cpu , RAM
 ## Project Features
 this Appliaction will show the user the uptodate movie with sumary information along with the location of live events 
 five more pages added Trending search , TV shows and season 
+the DB connected  to add movie and another route added to check the added one 
