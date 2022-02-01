@@ -6,6 +6,10 @@ const cors = require('cors');
 const app = express();
 app.use(cors());
 const axios = require('axios');
+app.use(express.json());  
+// DataBase
+const pg = require('pg');
+const client = new pg.Client(process.env.DATABASE_URL);
 
 const PORT = process.env.PORT;
 
@@ -14,6 +18,8 @@ let url = `https://api.themoviedb.org/3/trending/all/week?api_key=${process.env.
 
 const movieData = require('./MovieData/data.json');
 const res = require('express/lib/response');
+const { database } = require('pg/lib/defaults');
+const { Client } = require('pg/lib');
 
 ///// endpoints ///server for Movies 
 
@@ -23,6 +29,12 @@ app.get('/trending' , trendingHandler );
 app.get('/search' , searchHandler );
 app.get('/TV_sesons' , TV_sesonsHandler );
 app.get('/TV_shows' , TV_showsHandler );
+
+
+// New added routes connected with DB
+app.post('/addMovie' , addMovieHandler );
+app.get('/getMovies' , getMoviesHandler );
+
 
 
 ///   500 internal server error
@@ -139,9 +151,34 @@ function TV_showsHandler(req,res){
     })
 }
 
+//  addMovieHandler  
 
 
-app.listen(PORT, ()=>{
+function addMovieHandler(req,res){
+    const movieobje = req.body;
+    let sql = `INSERT INTO addMovieTable(title,release_date,poster_path,overview,personal_comment) VALUES ($1,$2,$3,$4,$5,$6) RETURNING *;`
+    let values=[movieobje.title,movieobje.release_date,movieobje.poster_path,movieobje.overview,movieobje.personal_comment];
+    client.query(sql,values).then(data =>{
+        res.status(200).json(data.rows);
+    }).catch(err=>{
+        errorHandler(err,req,res,'page error');
+    });
+  }
+  
+  
+  function getMoviesHandler(req,res){
+      let sql = `SELECT * FROM addMovieTable;`;
+      client.query(sql).then(data=>{
+         res.status(200).json(data.rows);
+      }).catch(err=>{
+        errorHandler(err,req,res,'page error');
+      });
+  }
 
-    console.log('listening to port 3000')
+client.connect().then(()=>{
+
+    app.listen(PORT, ()=>{
+
+      console.log('listening to port 3000')
+})
 })
