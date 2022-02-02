@@ -33,9 +33,12 @@ app.get('/TV_shows' , TV_showsHandler );
 
 // New added routes connected with DB
 app.post('/addMovie' , addMovieHandler );
-app.get('/getMovies' , getMoviesHandler );
+app.get('/getMovies1' , getMoviesHandler );
 
-
+// update and delete DB 
+app.put('/UPDATE/:id' , updateHandler)
+app.delete('/DELETE/:id' , DELETEHandler)
+app.get('/getMovie/:id' , getMovieHandler );
 
 ///   500 internal server error
 app.get('/',(req,res)=>res.send('500 error'))
@@ -156,8 +159,8 @@ function TV_showsHandler(req,res){
 
 function addMovieHandler(req,res){
     const movieobje = req.body;
-    let sql = `INSERT INTO addMovieTable(title,release_date,poster_path,overview,personal_comment) VALUES ($1,$2,$3,$4,$5,$6) RETURNING *;`
-    let values=[movieobje.title,movieobje.release_date,movieobje.poster_path,movieobje.overview,movieobje.personal_comment];
+    let sql = `INSERT INTO addMovieTable(title,release_date,poster_path,overview) VALUES ($1,$2,$3,$4) RETURNING *;`
+    let values=[movieobje.title,movieobje.release_date,movieobje.poster_path,movieobje.overview];
     client.query(sql,values).then(data =>{
         res.status(200).json(data.rows);
     }).catch(err=>{
@@ -174,6 +177,48 @@ function addMovieHandler(req,res){
         errorHandler(err,req,res,'page error');
       });
   }
+
+// ***********************************  New added functions for Task 14 **************************************
+
+  function updateHandler(req,res){
+    const id = req.params.id;
+    const Movieobjj = req.body;
+    const sql = `UPDATE addMovieTable SET title =$1, release_date = $2, poster_path = $3 ,overview=$4 WHERE id=$5 RETURNING *;`; 
+    let values=[Movieobjj.title,Movieobjj.release_date,Movieobjj.poster_path,Movieobjj.overview, id];
+    client.query(sql,values).then(data=>{
+        res.status(200).json(data.rows);
+        // res.status(204)
+    }).catch(err=>{
+        errorHandler(err,req,res,'page error');
+      });
+
+  }
+
+  function DELETEHandler(req,res){
+    const id = req.params.id;
+    const sql = `DELETE FROM addMovieTable WHERE id=${id};` 
+    // DELETE FROM table_name WHERE condition;
+
+    client.query(sql).then(()=>{
+        res.status(200).send("The Recipe has been deleted");
+        // res.status(204).json({});
+    }).catch(err=>{
+        errorHandler(err,req,res,'page error');
+      });
+
+  }
+
+  
+function getMovieHandler(req,res){
+
+    let sql = `SELECT * FROM addMovieTable WHERE id=${req.params.id};`;
+
+    client.query(sql).then(data=>{
+       res.status(200).json(data.rows);
+    }).catch(err=>{
+        errorHandler(err,req,res,'page error');
+      });
+}
 
 client.connect().then(()=>{
 
